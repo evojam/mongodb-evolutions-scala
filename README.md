@@ -1,5 +1,7 @@
 # MongoDB Evolutions library for Scala
 
+![Travis Build Status](https://travis-ci.org/evojam/mongodb-evolutions-scala.svg)
+
 ## License
 ```
 This software is licensed under the Apache 2 license, quoted below.
