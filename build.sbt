@@ -29,5 +29,8 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
+  "com.typesafe" % "config" % "1.3.0",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
