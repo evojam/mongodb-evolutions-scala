@@ -1,0 +1,14 @@
+var cursor = db.%s
+  .find(%s)
+  .sort({ 'revision': -1 });
+
+print('[');
+
+while(cursor.hasNext()) {
+  printjson(cursor.next());
+  if(cursor.hasNext()) {
+    print(',');
+  }
+}
+
+print(']');

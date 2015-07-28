@@ -1,6 +1,7 @@
 package com.evojam.mongodb.evolutions.command
 
 import com.evojam.mongodb.evolutions.config.ConfigurationComponent
+import com.evojam.mongodb.evolutions.model.command.SingleResultCommand
 
 trait CommandsComponent {
   this: ConfigurationComponent =>
@@ -9,9 +10,9 @@ trait CommandsComponent {
 
   class CommandsImpl extends Commands {
     override def acquireLock =
-      Command("lock/acquireLock.js", config.lockDBName)
+      SingleResultCommand("lock/acquireLock.js.template", config.lockDBName)
 
     override def releaseLock =
-      Command("lock/releaseLock.js", config.lockDBName)
+      SingleResultCommand("lock/releaseLock.js.template", config.lockDBName)
   }
 }

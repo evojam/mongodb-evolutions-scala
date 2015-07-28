@@ -8,9 +8,8 @@ import scala.util.control.Exception.catching
 
 import com.fasterxml.jackson.core.JsonParseException
 import play.api.libs.json.{Json, Reads}
-
-import com.evojam.mongodb.evolutions.command.Command
 import com.evojam.mongodb.evolutions.config.ConfigurationComponent
+import com.evojam.mongodb.evolutions.model.command.Command
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
 case class InvalidDatabaseEvolutionScript(msg: String) extends Exception
@@ -23,7 +22,7 @@ trait ExecutorComponent {
 
   class ExecutorImpl extends Executor {
     override def execute[T: Reads](cmd: Command) = {
-      logger.info(s"execute: ${cmd.command}")
+      logger.info(s"execute: ${cmd.value}")
 
       val input = inputFile(cmd)
       try {
@@ -67,7 +66,7 @@ trait ExecutorComponent {
     private def inputFile(cmd: Command): File = {
       val input = File.createTempFile("mongodb-script", ".js")
       printToFile(input) { pw =>
-        pw.print(cmd.command)
+        pw.print(cmd.value)
       }
       input
     }

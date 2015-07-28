@@ -1,0 +1,2 @@
+var result = %s
+printjson(result);
