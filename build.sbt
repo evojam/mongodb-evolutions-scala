@@ -28,7 +28,10 @@ resolvers ++= Seq(
   Resolver.typesafeRepo("releases")
 )
 
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
+
 libraryDependencies ++= Seq(
+  "com.kifi" %% "json-annotation" % "0.2",
   "com.typesafe" % "config" % "1.3.0",
   "com.typesafe.play" %% "play-json" % "2.3.8",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
