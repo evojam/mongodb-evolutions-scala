@@ -5,7 +5,7 @@ case class SingleResultCommand(commandName: String, commandArgs: String*) extend
   require(commandName.nonEmpty, "commandName cannot be empty")
 
   override lazy val value: String =
-    loadResource("command/singleResultCommand.js.template")
+    loadResource("command/singleResult.js.template")
       .format(command)
 
   private lazy val command =

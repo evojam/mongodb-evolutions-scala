@@ -34,7 +34,7 @@ case class Evolution(
 object Evolution {
   implicit val writes = new Writes[Evolution] {
     override def writes(evo: Evolution) = Json.obj(
-      "revision" -> evo.revision,
+      "_id" -> evo.revision,
       "up" -> evo.up,
       "down" -> evo.down,
       "state" -> evo.state,
@@ -44,7 +44,7 @@ object Evolution {
   }
 
   implicit val reads = (
-    (__ \ 'revision).read[Int] ~
+    (__ \ '_id).read[Int] ~
     (__ \ 'up).read[Option[Script]] ~
     (__ \ 'down).read[Option[Script]] ~
     (__ \ 'state).read[State] ~

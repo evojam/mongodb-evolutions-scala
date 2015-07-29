@@ -1,6 +1,6 @@
 var cursor = db.%s
   .find(%s)
-  .sort({ 'revision': -1 });
+  .sort({ '_id': -1 });
 
 print('[');
 

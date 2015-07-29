@@ -3,7 +3,7 @@ package com.evojam.mongodb.evolutions.executor
 import java.io.{PrintWriter, File}
 
 import scala.language.postfixOps
-import scala.sys.process.Process
+import scala.sys.process.{ProcessLogger, Process}
 import scala.util.control.Exception.catching
 
 import com.fasterxml.jackson.core.JsonParseException
@@ -21,15 +21,30 @@ trait ExecutorComponent {
   val executor: Executor
 
   class ExecutorImpl extends Executor {
-    override def execute[T: Reads](cmd: Command) = {
+    override def executeAndCollect[T: Reads](cmd: Command) = {
       logger.info(s"execute: ${cmd.value}")
 
       val input = inputFile(cmd)
       try {
         val processLogger = ListProcessLogger()
         processResult(
-          runProcess(config.mongoCmd, s"--quiet ${input.getAbsolutePath}") ! processLogger,
+          runScript(input, processLogger),
           processLogger.msgs.reverse.mkString("\n"))
+      } finally {
+        input.delete()
+        ()
+      }
+    }
+
+    override def execute(cmd: Command) = {
+      logger.info(s"execute: ${cmd.value}")
+
+      val input = inputFile(cmd)
+      try {
+        runScript(input) match {
+          case 0 => ExecutorResult.Success
+          case _ => ExecutorResult.Failure
+        }
       } finally {
         input.delete()
         ()
@@ -43,7 +58,12 @@ trait ExecutorComponent {
             .opt(Json.parse(cleanUpResult(output)))
             .map(_.asOpt[T])
             .getOrElse(throw InvalidDatabaseEvolutionScript(s"Failed to parse result: $output"))
+        case _ =>
+          throw InvalidDatabaseEvolutionScript(s"Failed to execute command: $result, $output")
       }
+
+    private def runScript(script: File, processLogger: ProcessLogger = ListProcessLogger()): Int =
+      runProcess(config.mongoCmd, s"--quiet ${script.getAbsolutePath}") ! processLogger
 
     private def runProcess(app: String, param: String) = {
       val cmd = app + " " + param

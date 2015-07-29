@@ -22,10 +22,10 @@ trait GuardComponent {
     }
 
     private def unlock() =
-      executor.execute[Lock](commands.releaseLock)
+      executor.executeAndCollect[Lock](commands.releaseLock)
 
     private def acquireLockAndExecute(block: => Unit) {
-      executor.execute[Lock](commands.acquireLock) match {
+      executor.executeAndCollect[Lock](commands.acquireLock) match {
         case Some(lock) =>
           lock.locked match {
             case true =>
