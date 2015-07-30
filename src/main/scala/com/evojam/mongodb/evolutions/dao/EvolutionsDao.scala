@@ -10,4 +10,5 @@ trait EvolutionsDao {
   def save(evolution: Evolution): ExecutorResult
   def remove(revision: Int): ExecutorResult
   def removeAll(): ExecutorResult
+  def isProcessing(): Boolean
 }

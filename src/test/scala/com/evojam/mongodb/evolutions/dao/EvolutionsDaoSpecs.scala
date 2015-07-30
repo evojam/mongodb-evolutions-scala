@@ -3,9 +3,9 @@ package com.evojam.mongodb.evolutions.dao
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
 
-import com.evojam.mongodb.evolutions.command.{Commands, CommandsComponent}
+import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
-import com.evojam.mongodb.evolutions.executor.{ExecutorResult, Executor, ExecutorComponent}
+import com.evojam.mongodb.evolutions.executor.{ExecutorResult, ExecutorComponent}
 import com.evojam.mongodb.evolutions.model.evolution.{State, Script, Evolution}
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
@@ -22,8 +22,8 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
   override val dao = new EvolutionsDaoImpl
 
   val evo1 = Evolution(1, None, None, State.Ready, None, None)
-  val evo1Update = Evolution(1, Some(Script("show dbs;")), None, State.Ready, None, None)
-  val evo2 = Evolution(2, None, None, State.Ready, None, None)
+  val evo2 = Evolution(2, None, None, State.ApplyingUp, None, None)
+  val evo2Update = Evolution(2, Some(Script("show dbs;")), None, State.Applied, None, None)
 
   "EvolutionsDao" should "return no evolutions from empty db" in {
     dao.getAll().size should be (0)
@@ -44,25 +44,33 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
     all2 should contain (evo2)
   }
 
+  it should "be in processing state" in {
+    dao.isProcessing() should be (true)
+  }
+
   it should "update evolution" in {
-    dao.save(evo1Update) should be (ExecutorResult.Success)
+    dao.save(evo2Update) should be (ExecutorResult.Success)
 
     val all = dao.getAll()
     all.size should be (2)
-    all should contain (evo1Update)
-    all should contain (evo2)
+    all should contain (evo1)
+    all should contain (evo2Update)
   }
 
   it should "get specified evolution" in {
-    dao.get(evo2.revision) should be (Some(evo2))
+    dao.get(evo2.revision) should be (Some(evo2Update))
+  }
+
+  it should "not be in processing state" in {
+    dao.isProcessing() should be (false)
   }
 
   it should "remove specified evolution" in {
-    dao.remove(evo1Update.revision) should be (ExecutorResult.Success)
+    dao.remove(evo1.revision) should be (ExecutorResult.Success)
 
     val all = dao.getAll()
     all.size should be(1)
-    all should contain (evo2)
+    all should contain (evo2Update)
   }
 
   it should "return no evolution after call to removeAll" in {

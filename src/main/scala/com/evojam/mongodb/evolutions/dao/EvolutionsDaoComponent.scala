@@ -2,7 +2,7 @@ package com.evojam.mongodb.evolutions.dao
 
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
-import com.evojam.mongodb.evolutions.model.evolution.Evolution
+import com.evojam.mongodb.evolutions.model.evolution.{State, Evolution}
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
 trait EvolutionsDaoComponent {
@@ -36,5 +36,10 @@ trait EvolutionsDaoComponent {
     override def removeAll() =
       executor.execute(
         commands.removeAllEvolutions)
+
+    override def isProcessing() =
+      getAll()
+        .filter(evo => evo.state == State.ApplyingUp || evo.state == State.ApplyingDown)
+        .nonEmpty
   }
 }

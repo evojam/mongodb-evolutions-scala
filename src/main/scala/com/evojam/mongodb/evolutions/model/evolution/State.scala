@@ -7,7 +7,7 @@ import play.api.libs.json._
 object State extends Enumeration {
   type State = Value
 
-  val Ready, Applied = Value
+  val Ready, Applied, ApplyingUp, ApplyingDown = Value
 
   def unapply(in: String) =
     catching(classOf[NoSuchElementException])
