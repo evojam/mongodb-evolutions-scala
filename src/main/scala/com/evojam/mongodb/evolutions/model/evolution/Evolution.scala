@@ -15,7 +15,7 @@ case class Evolution(
   revision: Int,
   up: Option[Script],
   down: Option[Script],
-  state: State,
+  state: Option[State],
   timestamp: Option[DateTime],
   lastProblem: Option[String]) {
 
@@ -47,7 +47,7 @@ object Evolution {
     (__ \ '_id).read[Int] ~
     (__ \ 'up).read[Option[Script]] ~
     (__ \ 'down).read[Option[Script]] ~
-    (__ \ 'state).read[State] ~
+    (__ \ 'state).read[Option[State]] ~
     (__ \ 'timestamp).read[Option[DateTime]] ~
     (__ \ 'lastProblem).read[Option[String]])(
       Evolution.apply _)
@@ -58,7 +58,7 @@ object Evolution {
         val (down, up) = scripts(content)
         Evolution(
           revision(file.getName),
-          up, down, State.Ready, None, None)
+          up, down, None, None, None)
       }).getOrElse(throw new IOException(s"Cannot read from ${file.getAbsolutePath}"))
 
   private def revision(name: String): Int =

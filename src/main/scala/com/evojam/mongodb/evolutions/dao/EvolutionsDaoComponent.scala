@@ -39,7 +39,7 @@ trait EvolutionsDaoComponent {
 
     override def isProcessing() =
       getAll()
-        .filter(evo => evo.state == State.ApplyingUp || evo.state == State.ApplyingDown)
+        .filter(evo => evo.state == Some(State.ApplyingUp) || evo.state == Some(State.ApplyingDown))
         .nonEmpty
   }
 }

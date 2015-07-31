@@ -19,6 +19,9 @@ trait EvolutionsManagerComponent {
       getAllFiles(new File(config.evolutionsPath))
         .map(Evolution.fromFile(_))
 
+    override def getActions() =
+      ???
+
     private def getAllFiles(evolutionsDir: File): List[File] =
       evolutionsDir match {
         case es if es.exists && es.isDirectory =>
