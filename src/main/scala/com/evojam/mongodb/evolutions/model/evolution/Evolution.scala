@@ -13,7 +13,7 @@ case class EvolutionException(msg: String) extends Exception(msg)
 
 case class Evolution(
   revision: Int,
-  up: Option[Script],
+  up: Script,
   down: Option[Script],
   state: Option[State],
   timestamp: Option[DateTime],
@@ -27,8 +27,7 @@ case class Evolution(
   require(lastProblem != null, "lastProblem cannot be null")
 
   def hash(): String =
-    up.map(_.md5).getOrElse("") +
-      down.map(_.md5).getOrElse("")
+    up.md5 + down.map(_.md5).getOrElse("")
 }
 
 object Evolution {
@@ -45,7 +44,7 @@ object Evolution {
 
   implicit val reads = (
     (__ \ '_id).read[Int] ~
-    (__ \ 'up).read[Option[Script]] ~
+    (__ \ 'up).read[Script] ~
     (__ \ 'down).read[Option[Script]] ~
     (__ \ 'state).read[Option[State]] ~
     (__ \ 'timestamp).read[Option[DateTime]] ~
@@ -69,12 +68,12 @@ object Evolution {
         throw EvolutionException(s"Cannot parse the revision: $name")
     }
 
-  private def scripts(content: String): (Option[Script], Option[Script]) =
+  private def scripts(content: String): (Option[Script], Script) =
     content.split('\n')
       .filter(_.nonEmpty)
       .foldLeft((List.empty[String], List.empty[String], Marker.Empty))(reduceLines) match {
         case (downs, ups, _) =>
-          (script(downs), script(ups))
+          (script(downs), script(ups).getOrElse(throw new EvolutionException(s"Up not defined: $content")))
       }
 
   private type ReductionStep = (List[String], List[String], Marker.Value)

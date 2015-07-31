@@ -21,9 +21,10 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
   override val executor = new ExecutorImpl
   override val dao = new EvolutionsDaoImpl
 
-  val evo1 = Evolution(1, None, None, None, None, None)
-  val evo2 = Evolution(2, None, None, Some(State.ApplyingUp), None, None)
-  val evo2Update = Evolution(2, Some(Script("show dbs;")), None, Some(State.Applied), None, None)
+  val up = Script("show dbs;")
+  val evo1 = Evolution(1, up, None, None, None, None)
+  val evo2 = Evolution(2, up, None, Some(State.ApplyingUp), None, None)
+  val evo2Update = Evolution(2, up, Some(Script("db.dropDatabase();")), Some(State.Applied), None, None)
 
   "EvolutionsDao" should "return no evolutions from empty db" in {
     dao.getAll().size should be (0)

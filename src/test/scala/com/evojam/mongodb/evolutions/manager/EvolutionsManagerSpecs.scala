@@ -15,16 +15,16 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers
   override val config = Configuration(ConfigFactory.load())
   override val evolutionsManager = new EvolutionsManagerImpl()
 
-  val sampleScript = Some(Script(
+  val sampleScript = Script(
     """db.database.find({
       |  'name': 'aname'
-      |});""".stripMargin))
+      |});""".stripMargin)
 
   "EvolutionsManager" should "load all evolutions" in {
     val es = evolutionsManager.getAll()
     es.size should be (2)
 
-    es(0) should be (Evolution(1, None, None, None, None, None))
-    es(1) should be (Evolution(2, sampleScript, sampleScript, None, None, None))
+    es(0) should be (Evolution(1, sampleScript, None, None, None, None))
+    es(1) should be (Evolution(2, sampleScript, Some(sampleScript), None, None, None))
   }
 }
