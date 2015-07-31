@@ -1,10 +1,10 @@
 // --- !Ups
-db.database.find({
+db.collection.find({
   'name': 'aname'
 });
 
 // --- !Downs
-db.database.find({
+db.collection.find({
 
   'name': 'aname'
 });
