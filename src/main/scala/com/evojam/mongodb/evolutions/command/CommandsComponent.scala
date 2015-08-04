@@ -3,8 +3,8 @@ package com.evojam.mongodb.evolutions.command
 import play.api.libs.json.Json
 
 import com.evojam.mongodb.evolutions.config.ConfigurationComponent
-import com.evojam.mongodb.evolutions.model.command.{RemoveCommand, RawCommand, QueryCommand, SingleResultCommand}
-import com.evojam.mongodb.evolutions.model.evolution.Evolution
+import com.evojam.mongodb.evolutions.model.command._
+import com.evojam.mongodb.evolutions.model.evolution.{Script, Evolution}
 
 trait CommandsComponent {
   this: ConfigurationComponent =>
@@ -55,5 +55,8 @@ trait CommandsComponent {
       RemoveCommand(
         config.evolutionsCollection,
         "query/all.js.template")
+
+    override def applyScript(script: Script) =
+      ScriptCommand(script)
   }
 }

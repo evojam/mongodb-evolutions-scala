@@ -26,6 +26,9 @@ class EvolutionsDaoMock(var evolutions: List[Evolution]) extends EvolutionsDao {
     ExecutorResult.Success
   }
 
+  override def remove(evolution: Evolution) =
+    remove(evolution.revision)
+
   override def save(evolution: Evolution) =
     evolutions
       .find(_.revision == evolution.revision)

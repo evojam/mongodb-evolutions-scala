@@ -9,6 +9,7 @@ trait EvolutionsDao {
   def insert(evolution: Evolution): ExecutorResult
   def save(evolution: Evolution): ExecutorResult
   def remove(revision: Int): ExecutorResult
+  def remove(evolution: Evolution): ExecutorResult
   def removeAll(): ExecutorResult
   def isProcessing(): Boolean
 }

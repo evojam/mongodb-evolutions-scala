@@ -33,6 +33,9 @@ trait EvolutionsDaoComponent {
       executor.execute(
         commands.removeEvolution(revision))
 
+    override def remove(evolution: Evolution) =
+      remove(evolution.revision)
+
     override def removeAll() =
       executor.execute(
         commands.removeAllEvolutions)
