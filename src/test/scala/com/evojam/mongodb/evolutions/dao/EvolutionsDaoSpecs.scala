@@ -3,10 +3,12 @@ package com.evojam.mongodb.evolutions.dao
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
 
+import com.evojam.mongodb.evolutions.clock.ClockComponent
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
 import com.evojam.mongodb.evolutions.executor.{ExecutorResult, ExecutorComponent}
 import com.evojam.mongodb.evolutions.journal.JournalComponent
+import com.evojam.mongodb.evolutions.mock.ClockMock
 import com.evojam.mongodb.evolutions.model.evolution.{State, Script, Evolution}
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
@@ -16,18 +18,20 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
   with ConfigurationComponent
   with CommandsComponent
   with ExecutorComponent
-  with JournalComponent {
+  with JournalComponent
+  with ClockComponent {
 
   override val config = Configuration(ConfigFactory.load())
   override def commands = new CommandsImpl
   override val executor = new ExecutorImpl
   override val journal = new JournalImpl
+  override val clock = new ClockMock
   override val dao = new EvolutionsDaoImpl
 
   val up = Script("show dbs;")
-  val evo1 = Evolution(1, up, None, None, None, None)
-  val evo2 = Evolution(2, up, None, Some(State.ApplyingUp), None, None)
-  val evo2Update = Evolution(2, up, Some(Script("db.dropDatabase();")), Some(State.Applied), None, None)
+  val evo1 = Evolution(1, up, None, None, Some(clock.now), None)
+  val evo2 = Evolution(2, up, None, Some(State.ApplyingUp), Some(clock.now), None)
+  val evo2Update = Evolution(2, up, Some(Script("db.dropDatabase();")), Some(State.Applied), Some(clock.now), None)
 
   "EvolutionsDao" should "return no evolutions from empty db" in {
     dao.getAll().size should be (0)

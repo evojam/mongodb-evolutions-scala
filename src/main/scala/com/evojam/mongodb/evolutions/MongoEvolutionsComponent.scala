@@ -2,6 +2,7 @@ package com.evojam.mongodb.evolutions
 
 import com.typesafe.config.ConfigFactory
 
+import com.evojam.mongodb.evolutions.clock.ClockComponent
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
 import com.evojam.mongodb.evolutions.dao.EvolutionsDaoComponent
@@ -19,7 +20,8 @@ trait MongoEvolutionsComponent
   with GuardComponent
   with EvolutionsDaoComponent
   with EvolutionsManagerComponent
-  with JournalComponent {
+  with JournalComponent
+  with ClockComponent {
 
   val globalConfig = ConfigFactory.load()
 
@@ -30,4 +32,5 @@ trait MongoEvolutionsComponent
   override val dao = new EvolutionsDaoImpl()
   override val journal = new JournalImpl()
   override val evolutionsManager = new EvolutionsManagerImpl()
+  override val clock = new ClockImpl()
 }

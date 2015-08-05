@@ -1,5 +1,6 @@
 package com.evojam.mongodb.evolutions.dao
 
+import com.evojam.mongodb.evolutions.clock.ClockComponent
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
 import com.evojam.mongodb.evolutions.journal.JournalComponent
@@ -11,7 +12,8 @@ trait EvolutionsDaoComponent {
   this: LoggerComponent
     with CommandsComponent
     with ExecutorComponent
-    with JournalComponent =>
+    with JournalComponent
+    with ClockComponent =>
 
   val dao: EvolutionsDao
 
@@ -27,13 +29,15 @@ trait EvolutionsDaoComponent {
     override def insert(evolution: Evolution) = {
       journal.push(Entry("insert", Some(evolution)))
       executor.execute(
-        commands.insertEvolution(evolution))
+        commands.insertEvolution(
+          evolution.copy(timestamp = Some(clock.now()))))
     }
 
     override def save(evolution: Evolution) = {
       journal.push(Entry("save", Some(evolution)))
       executor.execute(
-        commands.saveEvolution(evolution))
+        commands.saveEvolution(
+          evolution.copy(timestamp = Some(clock.now()))))
     }
 
     override def remove(evolution: Evolution) = {
