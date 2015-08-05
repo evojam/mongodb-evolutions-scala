@@ -67,14 +67,19 @@ trait EvolutionsManagerComponent {
       evolutionsDir match {
         case es if es.exists && es.isDirectory =>
           evolutionsDir.listFiles(evolutionNameFilter)
-            .toList.sortBy(_.getName)
+            .toList.sortBy(_.getName match {
+              case EvolutionFileName(digit) => digit.toInt
+              case _ => -1
+            })
         case _ =>
           throw EvolutionsManagerException(s"Cannot find directory: ${evolutionsDir.getAbsolutePath}")
       }
 
     private lazy val evolutionNameFilter = new FilenameFilter {
       override def accept(dir: File, name: String)=
-        name.matches("\\d+.js")
+        name.matches(EvolutionFileName.regex)
     }
+
+    private val EvolutionFileName = "(\\d+).js".r
   }
 }
