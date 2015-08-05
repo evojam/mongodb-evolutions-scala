@@ -7,6 +7,7 @@ import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationCompone
 import com.evojam.mongodb.evolutions.dao.EvolutionsDaoComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
 import com.evojam.mongodb.evolutions.guard.GuardComponent
+import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.manager.EvolutionsManagerComponent
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
@@ -17,7 +18,8 @@ trait MongoEvolutionsComponent
   with ExecutorComponent
   with GuardComponent
   with EvolutionsDaoComponent
-  with EvolutionsManagerComponent {
+  with EvolutionsManagerComponent
+  with JournalComponent {
 
   val globalConfig = ConfigFactory.load()
 
@@ -26,5 +28,6 @@ trait MongoEvolutionsComponent
   override val executor = new ExecutorImpl()
   override val guard = new GuardImpl()
   override val dao = new EvolutionsDaoImpl()
+  override val journal = new JournalImpl()
   override val evolutionsManager = new EvolutionsManagerImpl()
 }

@@ -5,6 +5,7 @@ import play.api.libs.json.Json
 import com.evojam.mongodb.evolutions.config.ConfigurationComponent
 import com.evojam.mongodb.evolutions.model.command._
 import com.evojam.mongodb.evolutions.model.evolution.{Script, Evolution}
+import com.evojam.mongodb.evolutions.model.journal.Entry
 
 trait CommandsComponent {
   this: ConfigurationComponent =>
@@ -63,5 +64,11 @@ trait CommandsComponent {
 
     override def applyScript(script: Script) =
       ScriptCommand(script)
+
+    override def addToJournal(entry: Entry) =
+      RawCommand(
+        "command/insert.js.template",
+        config.journalCollection,
+        Json.stringify(Json.toJson(entry)))
   }
 }

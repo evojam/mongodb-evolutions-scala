@@ -2,13 +2,16 @@ package com.evojam.mongodb.evolutions.dao
 
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
+import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.model.evolution.{State, Evolution}
+import com.evojam.mongodb.evolutions.model.journal.Entry
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
 trait EvolutionsDaoComponent {
   this: LoggerComponent
     with CommandsComponent
-    with ExecutorComponent =>
+    with ExecutorComponent
+    with JournalComponent =>
 
   val dao: EvolutionsDao
 
@@ -21,24 +24,29 @@ trait EvolutionsDaoComponent {
       executor.executeAndCollect[List[Evolution]](
         commands.getAllEvolutions).getOrElse(Nil)
 
-    override def insert(evolution: Evolution) =
+    override def insert(evolution: Evolution) = {
+      journal.push(Entry("insert", Some(evolution)))
       executor.execute(
         commands.insertEvolution(evolution))
+    }
 
-    override def save(evolution: Evolution) =
+    override def save(evolution: Evolution) = {
+      journal.push(Entry("save", Some(evolution)))
       executor.execute(
         commands.saveEvolution(evolution))
+    }
 
-    override def remove(revision: Int) =
+    override def remove(evolution: Evolution) = {
+      journal.push(Entry("remove", Some(evolution)))
       executor.execute(
-        commands.removeEvolution(revision))
+        commands.removeEvolution(evolution.revision))
+    }
 
-    override def remove(evolution: Evolution) =
-      remove(evolution.revision)
-
-    override def removeAll() =
+    override def removeAll() = {
+      journal.push(Entry("removeAll", None))
       executor.execute(
         commands.removeAllEvolutions)
+    }
 
     override def isProcessing() =
       getAll()

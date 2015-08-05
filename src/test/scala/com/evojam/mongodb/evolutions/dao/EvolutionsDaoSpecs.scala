@@ -6,6 +6,7 @@ import org.scalatest._
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
 import com.evojam.mongodb.evolutions.executor.{ExecutorResult, ExecutorComponent}
+import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.model.evolution.{State, Script, Evolution}
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
@@ -14,11 +15,13 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
   with LoggerComponent
   with ConfigurationComponent
   with CommandsComponent
-  with ExecutorComponent {
+  with ExecutorComponent
+  with JournalComponent {
 
   override val config = Configuration(ConfigFactory.load())
   override def commands = new CommandsImpl
   override val executor = new ExecutorImpl
+  override val journal = new JournalImpl
   override val dao = new EvolutionsDaoImpl
 
   val up = Script("show dbs;")
@@ -67,7 +70,7 @@ class EvolutionsDaoSpecs extends FlatSpec with Matchers
   }
 
   it should "remove specified evolution" in {
-    dao.remove(evo1.revision) should be (ExecutorResult.Success)
+    dao.remove(evo1) should be (ExecutorResult.Success)
 
     val all = dao.getAll()
     all.size should be(1)

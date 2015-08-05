@@ -2,6 +2,7 @@ package com.evojam.mongodb.evolutions.command
 
 import com.evojam.mongodb.evolutions.model.command.Command
 import com.evojam.mongodb.evolutions.model.evolution.{Script, Evolution}
+import com.evojam.mongodb.evolutions.model.journal.Entry
 
 trait Commands {
   def acquireLock: Command
@@ -16,4 +17,6 @@ trait Commands {
   def removeAllEvolutions: Command
 
   def applyScript(script: Script): Command
+
+  def addToJournal(entry: Entry): Command
 }

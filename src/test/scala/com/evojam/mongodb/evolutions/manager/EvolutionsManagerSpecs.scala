@@ -3,6 +3,7 @@ package com.evojam.mongodb.evolutions.manager
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.dao.EvolutionsDaoComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
+import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.mock.{Evolutions, EvolutionsDaoMock}
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
@@ -17,12 +18,14 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   with ExecutorComponent
   with CommandsComponent
   with LoggerComponent
-  with ConfigurationComponent {
+  with ConfigurationComponent
+  with JournalComponent {
 
   override val config = Configuration(ConfigFactory.load())
   override val dao = new EvolutionsDaoMock(predefEvolutions)
   override val executor = new ExecutorImpl
-  override def commands = new CommandsImpl
+  override val commands = new CommandsImpl
+  override val journal = new JournalImpl
   override val evolutionsManager = new EvolutionsManagerImpl()
 
   "EvolutionsManager" should "load all evolutions" in {
@@ -34,7 +37,7 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   }
 
   it should "assign ApplyUp Action when new script appears" in {
-    dao.remove(5)
+    dao.remove(predefEvolution05)
 
     evolutionsManager.getActions should be {
       List((Action.ApplyUp, predefEvolution05))

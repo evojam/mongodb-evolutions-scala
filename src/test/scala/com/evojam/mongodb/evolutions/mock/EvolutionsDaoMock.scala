@@ -21,13 +21,10 @@ class EvolutionsDaoMock(var evolutions: List[Evolution]) extends EvolutionsDao {
   override def isProcessing() =
     false
 
-  override def remove(revision: Int) = {
-    evolutions = evolutions.filterNot(_.revision == revision)
+  override def remove(evolution: Evolution) = {
+    evolutions = evolutions.filterNot(_.revision == evolution.revision)
     ExecutorResult.Success
   }
-
-  override def remove(evolution: Evolution) =
-    remove(evolution.revision)
 
   override def save(evolution: Evolution) =
     evolutions
