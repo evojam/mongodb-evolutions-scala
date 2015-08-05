@@ -24,21 +24,25 @@ trait GuardComponent {
     private def unlock() =
       executor.executeAndCollect[Lock](commands.releaseLock)
 
+    private def isLocked() =
+      executor.executeAndCollect[Lock](commands.getLock)
+        .map(_.locked).getOrElse(false)
+
     private def acquireLockAndExecute(block: => Unit) {
-      executor.executeAndCollect[Lock](commands.acquireLock) match {
-        case Some(lock) =>
-          lock.locked match {
-            case true =>
+      isLocked match {
+        case true =>
+          logger.error("The db is already locked by another process.")
+        case false =>
+          executor.executeAndCollect[Lock](commands.acquireLock) match {
+            case Some(Lock(true)) =>
               try { block }
               finally {
                 unlock()
                 ()
               }
-            case false =>
-              logger.error(s"The db is already locked by another process.")
+            case _ =>
+              logger.error("Failed to acquire lock.")
           }
-        case _ =>
-          logger.error(s"Failed to acquire lock.")
       }
     }
   }

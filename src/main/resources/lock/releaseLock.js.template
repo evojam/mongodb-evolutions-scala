@@ -6,4 +6,4 @@ db.runCommand({
     }
   },
   'new': true
-});
+}).value;

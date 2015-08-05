@@ -6,6 +6,7 @@ import com.evojam.mongodb.evolutions.model.evolution.{Script, Evolution}
 trait Commands {
   def acquireLock: Command
   def releaseLock: Command
+  def getLock: Command
 
   def getEvolution(revision: Int): Command
   def getAllEvolutions: Command

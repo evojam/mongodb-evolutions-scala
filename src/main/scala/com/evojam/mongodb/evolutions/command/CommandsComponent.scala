@@ -22,6 +22,11 @@ trait CommandsComponent {
         "lock/releaseLock.js.template",
         config.lockCollection)
 
+    override lazy val getLock =
+      SingleResultCommand(
+        "lock/getLock.js.template",
+        config.lockCollection)
+
     override def getEvolution(revision: Int) =
       SingleResultCommand(
         "command/findById.js.template",

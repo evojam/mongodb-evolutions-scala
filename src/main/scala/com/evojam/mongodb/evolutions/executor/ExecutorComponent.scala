@@ -54,6 +54,7 @@ trait ExecutorComponent {
     private def processResult[T: Reads](result: Int, output: String): Option[T] =
       result match {
         case 0 if output.nonEmpty =>
+          logger.info(s"Result: $result, output: $output")
           catching(classOf[JsonParseException])
             .opt(Json.parse(cleanUpResult(output)))
             .map(_.asOpt[T])
