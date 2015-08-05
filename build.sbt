@@ -31,6 +31,7 @@ resolvers ++= Seq(
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
 
 libraryDependencies ++= Seq(
+  "ch.qos.logback" % "logback-classic" % "1.1.3",
   "com.kifi" %% "json-annotation" % "0.2",
   "com.typesafe" % "config" % "1.3.0",
   "com.typesafe.play" %% "play-json" % "2.3.8",
