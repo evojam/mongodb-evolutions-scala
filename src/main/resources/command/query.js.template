@@ -1,4 +1,4 @@
-var cursor = db.%s
+var cursor = db['%s']
   .find(%s)
   .sort({ '_id': -1 });
 

@@ -1,1 +1,1 @@
-db.%s.save(%s);
+db['%s'].save(%s);
