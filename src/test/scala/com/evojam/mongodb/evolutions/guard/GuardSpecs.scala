@@ -32,8 +32,10 @@ class GuardSpecs extends FlatSpec with Matchers
     var res = 0
     guard.withLock {
       res = 1
-      guard.withLock {
-        res = 2
+      intercept[GuardException] {
+        guard.withLock {
+          res = 2
+        }
       }
     }
     res should be (1)

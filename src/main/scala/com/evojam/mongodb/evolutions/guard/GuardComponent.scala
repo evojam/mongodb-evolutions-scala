@@ -5,6 +5,8 @@ import com.evojam.mongodb.evolutions.config.ConfigurationComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
+case class GuardException(msg: String) extends Exception(msg)
+
 trait GuardComponent {
   this: ConfigurationComponent
     with CommandsComponent
@@ -31,7 +33,7 @@ trait GuardComponent {
     private def acquireLockAndExecute(block: => Unit) {
       isLocked match {
         case true =>
-          logger.error("The db is already locked by another process.")
+          throw GuardException("The db is already locked by another process")
         case false =>
           executor.executeAndCollect[Lock](commands.acquireLock) match {
             case Some(Lock(true)) =>
@@ -41,7 +43,7 @@ trait GuardComponent {
                 ()
               }
             case _ =>
-              logger.error("Failed to acquire lock.")
+              throw GuardException("Failed to acquire lock.")
           }
       }
     }
