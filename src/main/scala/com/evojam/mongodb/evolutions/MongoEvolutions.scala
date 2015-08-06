@@ -2,6 +2,8 @@ package com.evojam.mongodb.evolutions
 
 import com.evojam.mongodb.evolutions.model.evolution.{Evolution, State, Action}
 
+case class MongoEvolutionsException(msg: String) extends Exception(msg)
+
 class MongoEvolutions extends MongoEvolutionsComponent {
   def applyUp(evolution: Evolution) {
     logger.info(s"Applying up: $evolution")
@@ -33,14 +35,23 @@ class MongoEvolutions extends MongoEvolutionsComponent {
     logger.info("Apply evolutions")
 
     guard.withLock {
-      evolutionsManager.getActions().foreach {
-        case (Action.ApplyUp, evolution) =>
-          applyUp(evolution)
-        case (Action.ApplyDown, evolution) =>
-          applyDown(evolution)
-        case (Action.Update, evolution) =>
-          update(evolution)
+      if (noPendingEvolution) {
+        evolutionsManager.getActions().foreach {
+          case (Action.ApplyUp, evolution) =>
+            applyUp(evolution)
+          case (Action.ApplyDown, evolution) =>
+            applyDown(evolution)
+          case (Action.Update, evolution) =>
+            update(evolution)
+        }
+      } else {
+        throw MongoEvolutionsException("There are some pending evolutions.")
       }
     }
   }
+
+  private def noPendingEvolution(): Boolean =
+    dao.getAll
+      .filterNot(_.state == Some(State.Applied))
+      .isEmpty
 }
