@@ -5,7 +5,6 @@ import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
 import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.model.evolution.{State, Evolution}
-import com.evojam.mongodb.evolutions.model.journal.Entry
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
 trait EvolutionsDaoComponent {
@@ -27,27 +26,27 @@ trait EvolutionsDaoComponent {
         commands.getAllEvolutions).getOrElse(Nil)
 
     override def insert(evolution: Evolution) = {
-      journal.push(Entry("insert", Some(evolution)))
+      journal.push("insert", evolution)
       executor.execute(
         commands.insertEvolution(
           evolution.copy(timestamp = Some(clock.now()))))
     }
 
     override def save(evolution: Evolution) = {
-      journal.push(Entry("save", Some(evolution)))
+      journal.push("save", evolution)
       executor.execute(
         commands.saveEvolution(
           evolution.copy(timestamp = Some(clock.now()))))
     }
 
     override def remove(evolution: Evolution) = {
-      journal.push(Entry("remove", Some(evolution)))
+      journal.push("remove", evolution)
       executor.execute(
         commands.removeEvolution(evolution.revision))
     }
 
     override def removeAll() = {
-      journal.push(Entry("removeAll", None))
+      journal.push("removeAll")
       executor.execute(
         commands.removeAllEvolutions)
     }
