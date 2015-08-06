@@ -6,7 +6,7 @@ case class MongoEvolutionsException(msg: String) extends Exception(msg)
 
 class MongoEvolutions extends MongoEvolutionsComponent {
   def applyUp(evolution: Evolution) {
-    logger.info(s"Applying up: $evolution")
+    logger.info(s"Applying up: ${evolution.revision}")
 
     dao.insert(evolution.copy(state = Some(State.ApplyingUp)))
     executor.execute(commands.applyScript(evolution.up))
@@ -15,7 +15,7 @@ class MongoEvolutions extends MongoEvolutionsComponent {
   }
 
   def applyDown(evolution: Evolution) {
-    logger.info(s"Applying down: $evolution")
+    logger.info(s"Applying down: ${evolution.revision}")
 
     evolution.down
       .foreach { downScript =>
@@ -26,7 +26,7 @@ class MongoEvolutions extends MongoEvolutionsComponent {
   }
 
   def update(evolution: Evolution) {
-    logger.info(s"Updating $evolution")
+    logger.info(s"Updating ${evolution.revision}")
     dao.save(evolution.copy(state = Some(State.Applied)))
     ()
   }
