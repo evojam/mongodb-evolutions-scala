@@ -56,7 +56,7 @@ trait ExecutorComponent {
         case 0 if output.nonEmpty =>
           logger.debug(s"Result: $result, output: $output")
           catching(classOf[JsonParseException])
-            .opt(Json.parse(cleanUpResult(output)))
+            .opt(Json.parse(output))
             .map(_.asOpt[T])
             .getOrElse(throw InvalidDatabaseEvolutionScript(s"Failed to parse result: $output"))
         case _ =>
@@ -73,10 +73,6 @@ trait ExecutorComponent {
         case false => Process(cmd)
       }
     }
-
-    private def cleanUpResult(input: String) =
-      ("ObjectId\\(([\"a-zA-Z0-9]*)\\)"r)
-        .replaceAllIn(input, _.group(1))
 
     private def printToFile(file: File)(op: PrintWriter => Unit) {
       val pw = new PrintWriter(file)

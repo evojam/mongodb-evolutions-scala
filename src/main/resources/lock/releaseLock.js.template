@@ -1,9 +1,1 @@
-db.runCommand({
-  'findAndModify': '%s',
-  'update': {
-    '$set': {
-      'locked': false
-    }
-  },
-  'new': true
-}).value;
+db['%s'].drop();
