@@ -1,11 +1,17 @@
-db.runCommand({
-  'findAndModify': '%s',
-  'update': {
-    '$set': {
-      '_id': 1,
-      'locked': true
-    }
-  },
-  'upsert': true,
-  'new': true
-}).value;
+(function () {
+  var dbName = '%s';
+
+  db.runCommand({
+    'findAndModify': dbName,
+    'update': {
+      '$set': {
+        '_id': 1,
+        'locked': true
+      }
+    },
+    'upsert': true,
+    'new': true
+  });
+
+  return db[dbName].findOne();
+})();
