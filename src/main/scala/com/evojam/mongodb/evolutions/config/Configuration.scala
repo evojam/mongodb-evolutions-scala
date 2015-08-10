@@ -25,9 +25,9 @@ case class Configuration(
 object Configuration {
   val MongoCmd = Setting[String]("mongodb.evolution.mongoCmd", None)
   val UseLocks = Setting("mongodb.evolution.useLocks", Some(false))
-  val EvolutionsColName = Setting("mongodb.evolution.colName", Some("mongodbevolutions"))
-  val LockColName = Setting("mongodb.evolution.lockColName", Some("mongodb_evolutions_lock"))
-  val JournalColName = Setting("mongodb.evolution.journalColName", Some("mongo_evolutions_journal"))
+  val EvolutionsColName = Setting("mongodb.evolution.colName", Some("mongodbEvolutions"))
+  val LockColName = Setting("mongodb.evolution.lockColName", Some("mongodbEvolutionsLock"))
+  val JournalColName = Setting("mongodb.evolution.journalColName", Some("mongoEvolutionsJournal"))
   val EvolutionsPath = Setting("mongodb.evolution.evolutionsPath", Some("evolutions/"))
 
   def apply(implicit config: Config): Configuration =

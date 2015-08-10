@@ -11,6 +11,6 @@ class ConfigurationSpecs extends FlatSpec with Matchers
   "Configuration" should "load configuration properties" in {
     config.mongoCmd shouldNot be (null)
     config.useLocks should be (true)
-    config.lockCollection should be ("lock-for-mongodb-evolutions")
+    config.lockCollection should be ("lockForMongodbEvolutions")
   }
 }
