@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="mongodb-evolutions-scala" level="error">
+    <logger name="mongodb-evolutions-scala" level="debug">
         <appender-ref ref="console" />
     </logger>
 </configuration>
