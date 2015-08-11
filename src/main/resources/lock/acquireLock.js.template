@@ -1,11 +1,11 @@
 (function () {
   var dbName = '%s';
+  var query = { '_id': 1 };
 
-  db.runCommand({
-    'findAndModify': dbName,
+  db[dbName].findAndModify({
+    'query': query,
     'update': {
       '$set': {
-        '_id': 1,
         'locked': true
       }
     },
@@ -13,5 +13,5 @@
     'new': true
   });
 
-  return db[dbName].findOne();
+  return db[dbName].findOne(query);
 })();

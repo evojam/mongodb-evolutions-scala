@@ -6,7 +6,7 @@ import com.evojam.mongodb.evolutions.model.command.SingleResultCommand
 
 class SingleResultCommandSpec extends FlatSpec with Matchers {
   val collection = "a-collection"
-  val cmd = SingleResultCommand("lock/acquireLock.js.template", collection)
+  val cmd = SingleResultCommand("script/sample.js.template", collection)
 
   "SingleResultCommand" should "read command from resources" in {
     cmd.value should not be empty
