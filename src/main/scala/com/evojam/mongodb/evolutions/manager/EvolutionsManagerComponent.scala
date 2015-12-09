@@ -32,13 +32,22 @@ trait EvolutionsManagerComponent {
         getAllFiles(new File(config.evolutionsPath))
           .map(Evolution.fromFile(_)))
 
-    override def getActions() =
-      getAll().foldLeft(noAction)(processEvolution(dao.getAll())) match {
+    override def getActions() = {
+      val evolutions = getAll()
+      val dbEvolutions = dao.getAll()
+
+      evolutions.foldLeft(noAction)(processEvolution(dbEvolutions)) match {
         case Actions(downs, updates, ups, _) =>
-          downs.map((Action.ApplyDown, _)).reverse :::
+          (missingEvolutions(evolutions, dbEvolutions) ::: downs)
+            .map((Action.ApplyDown, _)).reverse :::
           updates.map((Action.Update, _)) :::
           ups.map((Action.ApplyUp, _))
       }
+    }
+
+    private def missingEvolutions(evolutions: List[Evolution], dbEvolutions: List[Evolution]) =
+      dbEvolutions.filter(_.revision > evolutions.maxBy(_.revision).revision)
+        .sortBy(_.revision)
 
     private val noAction =
       Actions(List.empty[Evolution], List.empty[Evolution], List.empty[Evolution], false)

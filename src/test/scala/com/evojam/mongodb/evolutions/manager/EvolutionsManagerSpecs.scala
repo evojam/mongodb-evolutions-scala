@@ -34,6 +34,11 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   override val evolutionsManager = new EvolutionsManagerImpl()
   override val inputValidator = new InputValidatorImpl()
 
+  def resetDao() {
+    dao.removeAll
+    predefEvolutions.map(dao.insert)
+  }
+
   "EvolutionsManager" should "load all evolutions" in {
     evolutionsManager.getAll should be (predefEvolutions)
   }
@@ -87,6 +92,30 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
       List(
         (Action.Update, predefEvolution03),
         (Action.Update, predefEvolution05))
+    }
+  }
+
+  it should "assign ApplyDown Action when old evolution is missing" in {
+    resetDao()
+    dao.insert(predefEvolution06)
+
+    evolutionsManager.getActions should be {
+      List(
+        (Action.ApplyDown, predefEvolution06)
+      )
+    }
+  }
+
+  it should "assign ApplyDown Actions when old evolutions are missing" in {
+    resetDao()
+    dao.insert(predefEvolution06)
+    dao.insert(predefEvolution07)
+
+    evolutionsManager.getActions should be {
+      List(
+        (Action.ApplyDown, predefEvolution07),
+        (Action.ApplyDown, predefEvolution06)
+      )
     }
   }
 }
