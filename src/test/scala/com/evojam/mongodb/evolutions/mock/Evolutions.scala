@@ -29,6 +29,8 @@ trait Evolutions {
   val predefEvolution05 = Evolution(5, setSthSctipt, Some(unsetSthScript), None, None, None)
   val predefEvolution05ModifiedUp = Evolution(5, setSthModifiedSctipt, Some(unsetSthScript), None, None, None)
   val predefEvolution05ModifiedDown = Evolution(5, setSthSctipt, Some(unsetSthModifiedScript), None, None, None)
+  val predefEvolution06 = Evolution(6, findScript, Some(unsetSthScript), None, None, None)
+  val predefEvolution07 = Evolution(7, findScript, Some(unsetSthModifiedScript), None, None, None)
 
   val predefEvolutions = List(
     predefEvolution01,

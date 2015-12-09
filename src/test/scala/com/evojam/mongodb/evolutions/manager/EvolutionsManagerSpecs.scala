@@ -1,18 +1,18 @@
 package com.evojam.mongodb.evolutions.manager
 
+import com.typesafe.config.ConfigFactory
+import org.scalatest._
+
 import com.evojam.mongodb.evolutions.clock.ClockComponent
 import com.evojam.mongodb.evolutions.command.CommandsComponent
+import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
 import com.evojam.mongodb.evolutions.dao.EvolutionsDaoComponent
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
 import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.mock.{ClockMock, Evolutions, EvolutionsDaoMock}
-import com.typesafe.config.ConfigFactory
-import org.scalatest._
-
-import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
-import com.evojam.mongodb.evolutions.model.evolution.{Evolution, Action}
-import com.evojam.mongodb.evolutions.model.evolution.Action.Action
+import com.evojam.mongodb.evolutions.model.evolution.Action
 import com.evojam.mongodb.evolutions.util.LoggerComponent
+import com.evojam.mongodb.evolutions.validator.input.InputValidatorComponent
 
 class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   with EvolutionsManagerComponent
@@ -22,7 +22,8 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   with LoggerComponent
   with ConfigurationComponent
   with JournalComponent
-  with ClockComponent {
+  with ClockComponent
+  with InputValidatorComponent {
 
   override val config = Configuration(ConfigFactory.load())
   override val dao = new EvolutionsDaoMock(predefEvolutions)
@@ -31,6 +32,7 @@ class EvolutionsManagerSpecs extends FlatSpec with Matchers with Evolutions
   override val journal = new JournalImpl
   override val clock = new ClockMock
   override val evolutionsManager = new EvolutionsManagerImpl()
+  override val inputValidator = new InputValidatorImpl()
 
   "EvolutionsManager" should "load all evolutions" in {
     evolutionsManager.getAll should be (predefEvolutions)

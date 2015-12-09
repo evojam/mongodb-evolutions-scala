@@ -1,54 +1,59 @@
 package com.evojam.mongodb.evolutions.manager
 
+import scalaz._, Scalaz._
+
 import java.io.{FilenameFilter, File}
 
 import com.evojam.mongodb.evolutions.config.ConfigurationComponent
 import com.evojam.mongodb.evolutions.dao.EvolutionsDaoComponent
 import com.evojam.mongodb.evolutions.model.evolution.{Action, Evolution}
 import com.evojam.mongodb.evolutions.util.LoggerComponent
+import com.evojam.mongodb.evolutions.validator.input.{EvolutionsInputException, InputValidatorComponent}
 
 case class EvolutionsManagerException(msg: String) extends Exception(msg)
 
 trait EvolutionsManagerComponent {
   this: LoggerComponent
     with ConfigurationComponent
-    with EvolutionsDaoComponent =>
+    with EvolutionsDaoComponent
+    with InputValidatorComponent =>
 
   val evolutionsManager: EvolutionsManager
 
+  private case class Actions(
+    downs: List[Evolution],
+    updates: List[Evolution],
+    ups: List[Evolution],
+    revert: Boolean)
+
   class EvolutionsManagerImpl extends EvolutionsManager {
     override def getAll() =
-      getAllFiles(new File(config.evolutionsPath))
-        .map(Evolution.fromFile(_))
+      validateEvolutions(
+        getAllFiles(new File(config.evolutionsPath))
+          .map(Evolution.fromFile(_)))
 
     override def getActions() =
-      getAll().foldLeft(noAction)(processEvolution(dao.getAll)) match {
+      getAll().foldLeft(noAction)(processEvolution(dao.getAll())) match {
         case Actions(downs, updates, ups, _) =>
           downs.map((Action.ApplyDown, _)).reverse :::
           updates.map((Action.Update, _)) :::
           ups.map((Action.ApplyUp, _))
       }
 
-    private case class Actions(
-      downs: List[Evolution],
-      updates: List[Evolution],
-      ups: List[Evolution],
-      revert: Boolean)
-
-    private val noAction = Actions(List.empty[Evolution], List.empty[Evolution], List.empty[Evolution], false)
+    private val noAction =
+      Actions(List.empty[Evolution], List.empty[Evolution], List.empty[Evolution], false)
 
     private def processEvolution(dbEvolutions: List[Evolution])(step: Actions, evolution: Evolution) =
-      dbEvolutions.find(_.revision == evolution.revision)
+      dbEvolutions
+        .find(_.revision === evolution.revision)
         .map(dbEvolution =>
-          step.revert match {
-            case true =>
+          step.revert
+            .option(
               step.copy(
                 downs = step.downs :+ dbEvolution,
-                ups = step.ups :+ evolution)
-            case false =>
-              compareEvolutions(evolution, dbEvolution)(step)
-          }
-        ).getOrElse(step.copy(ups = step.ups :+ evolution))
+                ups = step.ups :+ evolution))
+            .getOrElse(compareEvolutions(evolution, dbEvolution)(step)))
+        .getOrElse(step.copy(ups = step.ups :+ evolution))
 
     private def compareEvolutions(evolution: Evolution, dbEvolution: Evolution)(step: Actions) =
       (evolution, dbEvolution) match {
@@ -74,6 +79,15 @@ trait EvolutionsManagerComponent {
         case _ =>
           throw EvolutionsManagerException(s"Cannot find directory: ${evolutionsDir.getAbsolutePath}")
       }
+
+    private def validateEvolutions(input: List[Evolution]) =
+      input.nonEmpty
+        .option(inputValidator.validate(input)
+          .toEither match {
+            case Right(_) => input
+            case Left(err) => throw EvolutionsInputException(err.toList)
+          })
+        .getOrElse(input)
 
     private lazy val evolutionNameFilter = new FilenameFilter {
       override def accept(dir: File, name: String)=

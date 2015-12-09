@@ -28,14 +28,15 @@ resolvers ++= Seq(
   Resolver.typesafeRepo("releases")
 )
 
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.3",
   "com.kifi" %% "json-annotation" % "0.2",
   "com.typesafe" % "config" % "1.3.0",
-  "com.typesafe.play" %% "play-json" % "2.3.8",
+  "com.typesafe.play" %% "play-json" % "2.3.9",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
+  "org.scalaz" %% "scalaz-core" % "7.2.0"
 )
