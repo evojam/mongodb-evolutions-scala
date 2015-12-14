@@ -29,7 +29,7 @@ trait InputValidatorComponent {
         evolutions =>
           evolutions.foldLeft(Set.empty[Int])(
             (acc, evolution) => acc + evolution.revision)
-            .length === evolutions.length)
+            .size === evolutions.length)
 
     private def validateFirst =
       validate("First revision must be 1")(
