@@ -37,5 +37,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scalatest" %% "scalatest" % "2.2.5" % "test",
-  "org.scalaz" %% "scalaz-core" % "7.2.0"
+  "org.scalaz" %% "scalaz-core" % "7.1.6"
 )
