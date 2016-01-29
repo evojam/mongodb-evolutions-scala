@@ -45,10 +45,10 @@ object Evolution {
   implicit val reads = (
     (__ \ '_id).read[Int] ~
     (__ \ 'up).read[Script] ~
-    (__ \ 'down).read[Option[Script]] ~
-    (__ \ 'state).read[Option[State]] ~
-    (__ \ 'timestamp).read[Option[DateTime]] ~
-    (__ \ 'lastProblem).read[Option[String]])(
+    (__ \ 'down).readNullable[Script] ~
+    (__ \ 'state).readNullable[State] ~
+    (__ \ 'timestamp).readNullable[DateTime] ~
+    (__ \ 'lastProblem).readNullable[String])(
       Evolution.apply _)
 
   def fromFile(file: File): Evolution =

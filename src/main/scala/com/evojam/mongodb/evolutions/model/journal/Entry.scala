@@ -1,11 +1,11 @@
 package com.evojam.mongodb.evolutions.model.journal
 
-import com.kifi.macros.json
 import org.joda.time.DateTime
+import play.api.libs.json._
 
 import com.evojam.mongodb.evolutions.model.evolution.Evolution
 
-@json case class Entry(
+case class Entry(
   operation: String,
   timestamp: DateTime,
   evolution: Option[Evolution]) {
@@ -14,4 +14,8 @@ import com.evojam.mongodb.evolutions.model.evolution.Evolution
   require(operation.nonEmpty, "operation cannot be empty")
   require(timestamp != null, "timestamp cannot be null")
   require(evolution != null, "evolution cannot be null")
+}
+
+object Entry {
+  implicit val format = Json.format[Entry]
 }

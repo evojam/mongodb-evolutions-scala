@@ -30,13 +30,10 @@ resolvers ++= Seq(
 
 fork := true
 
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
-
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.3",
-  "com.kifi" %% "json-annotation" % "0.2",
   "com.typesafe" % "config" % "1.3.0",
-  "com.typesafe.play" %% "play-json" % "2.3.9",
+  "com.typesafe.play" %% "play-json" % "2.4.6",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scalatest" %% "scalatest" % "2.2.5" % "test",
