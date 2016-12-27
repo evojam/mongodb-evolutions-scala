@@ -1,5 +1,5 @@
-package com.evojam.mongodb.evolutions.executor
 
+package com.evojam.mongodb.evolutions.executor
 import java.io.{PrintWriter, File}
 
 import scala.language.postfixOps
@@ -12,7 +12,9 @@ import com.evojam.mongodb.evolutions.config.ConfigurationComponent
 import com.evojam.mongodb.evolutions.model.command.Command
 import com.evojam.mongodb.evolutions.util.LoggerComponent
 
-case class InvalidDatabaseEvolutionScript(msg: String) extends Exception
+case class ConnectionFailed(msg: String) extends Exception(msg)
+case class InvalidDatabaseEvolutionScript(msg: String) extends Exception(msg)
+case class UnknownErrors(errors: List[String]) extends Exception(errors.mkString(";"))
 
 trait ExecutorComponent {
   this: ConfigurationComponent
@@ -29,7 +31,7 @@ trait ExecutorComponent {
         val processLogger = ListProcessLogger()
         processResult(
           runScript(input, processLogger),
-          processLogger.msgs.reverse.mkString("\n"))
+          processLogger)
       } finally {
         input.delete()
         ()
@@ -51,24 +53,42 @@ trait ExecutorComponent {
       }
     }
 
-    private def processResult[T: Reads](result: Int, output: String): Option[T] =
+    private def processResult[T: Reads](result: Int, processLogger: ListProcessLogger): Option[T] = {
+      val output = processLogger.msgs.reverse.mkString("\n")
+
+      logger.debug(s"result: $result, output: $output")
+
       result match {
         case 0 if output.nonEmpty =>
-          logger.debug(s"Result: $result, output: $output")
           catching(classOf[JsonParseException])
             .opt(Json.parse(output))
             .map(_.asOpt[T])
             .getOrElse(throw InvalidDatabaseEvolutionScript(s"Failed to parse result: $output"))
+        case _ if processLogger.errors.nonEmpty =>
+          throw decodeProcessExceptions(result, output, processLogger.errors)
         case _ =>
           throw InvalidDatabaseEvolutionScript(s"Failed to execute command: $result, $output")
       }
+    }
+
+    private def decodeProcessExceptions(result: Int, output: String, errors: List[String]): Exception = {
+      val connectionErrorMsg = "exception: connect failed"
+
+      errors.find(_.equals(connectionErrorMsg))
+        .map(_ => ConnectionFailed(s"Failed to connect: $result, $output"))
+        .getOrElse(UnknownErrors(errors))
+    }
 
     private def runScript(script: File, processLogger: ProcessLogger = ListProcessLogger()): Int =
       runProcess(config.mongoCmd, s"--quiet ${script.getAbsolutePath}") ! processLogger
 
     private def runProcess(app: String, param: String) = {
       val cmd = app + " " + param
-      config.isWindows match {
+      val isWindows = config.isWindows
+
+      logger.debug(s"run process - command: `$cmd`, isWindows: `$isWindows`")
+
+      isWindows match {
         case true => Process("cmd" :: "/c" :: cmd :: Nil)
         case false => Process(cmd)
       }
