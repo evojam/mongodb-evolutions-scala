@@ -2,9 +2,9 @@ organization := "com.evojam"
 
 name := "mongodb-evolutions-scala"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.7")
+crossScalaVersions := Seq("2.11.8")
 
 scalacOptions ++= Seq(
   "-target:jvm-1.7",
@@ -31,11 +31,11 @@ resolvers ++= Seq(
 fork := true
 
 libraryDependencies ++= Seq(
-  "ch.qos.logback" % "logback-classic" % "1.1.3",
-  "com.typesafe" % "config" % "1.3.0",
-  "com.typesafe.play" %% "play-json" % "2.4.6",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "ch.qos.logback" % "logback-classic" % "1.1.8",
+  "com.typesafe" % "config" % "1.3.1",
+  "com.typesafe.play" %% "play-json" % "2.4.8",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
-  "org.scalaz" %% "scalaz-core" % "7.2.0"
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+  "org.scalaz" %% "scalaz-core" % "7.2.8"
 )
