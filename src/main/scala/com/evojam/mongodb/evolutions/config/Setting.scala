@@ -14,6 +14,10 @@ case class Setting[T: TypeTag](entry: String, default: Option[T]) {
   def value()(implicit config: Config): T = this match {
     case Setting(entry, default) if typeOf[T] <:< typeOf[Boolean] =>
       getOrDefault(config.getBoolean(entry))
+    case Setting(entry, default) if typeOf[T] <:< typeOf[Int] =>
+      getOrDefault(config.getInt(entry))
+    case Setting(entry, default) if typeOf[T] <:< typeOf[Double] =>
+      getOrDefault(config.getDouble(entry))
     case Setting(entry, default) if typeOf[T] <:< typeOf[String] =>
       getOrDefault(config.getString(entry))
     case _ => defaultValue

@@ -1,19 +1,20 @@
 package com.evojam.mongodb.evolutions.guard
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
 import com.evojam.mongodb.evolutions.executor.ExecutorComponent
-import com.evojam.mongodb.evolutions.util.LoggerComponent
+import com.evojam.mongodb.evolutions.util.{EmbeddedMongoDb, LoggerComponent, MongodProps, TestConfiguration}
 
 class GuardSpecs extends FlatSpec with Matchers
   with GuardComponent
   with ExecutorComponent
   with CommandsComponent
   with ConfigurationComponent
-  with LoggerComponent {
+  with LoggerComponent
+  with EmbeddedMongoDb {
 
   override val config = Configuration(ConfigFactory.load)
   override def commands = new CommandsImpl

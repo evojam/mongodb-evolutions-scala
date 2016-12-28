@@ -31,11 +31,12 @@ resolvers ++= Seq(
 fork := true
 
 libraryDependencies ++= Seq(
+  "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.50.5" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "ch.qos.logback" % "logback-classic" % "1.1.8",
   "com.typesafe" % "config" % "1.3.1",
   "com.typesafe.play" %% "play-json" % "2.4.8",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "org.scalaz" %% "scalaz-core" % "7.2.8"
 )

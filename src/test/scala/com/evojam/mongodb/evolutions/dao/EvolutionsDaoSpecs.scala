@@ -6,16 +6,17 @@ import org.scalatest._
 import com.evojam.mongodb.evolutions.clock.ClockComponent
 import com.evojam.mongodb.evolutions.command.CommandsComponent
 import com.evojam.mongodb.evolutions.config.{Configuration, ConfigurationComponent}
-import com.evojam.mongodb.evolutions.executor.{ExecutorResult, ExecutorComponent}
+import com.evojam.mongodb.evolutions.executor.{ExecutorComponent, ExecutorResult}
 import com.evojam.mongodb.evolutions.journal.JournalComponent
 import com.evojam.mongodb.evolutions.mock.ClockMock
-import com.evojam.mongodb.evolutions.model.evolution.{State, Script, Evolution}
-import com.evojam.mongodb.evolutions.util.LoggerComponent
+import com.evojam.mongodb.evolutions.model.evolution.{Evolution, Script, State}
+import com.evojam.mongodb.evolutions.util.{EmbeddedMongoDb, LoggerComponent, MongodProps, TestConfiguration}
 
 class EvolutionsDaoSpecs extends FlatSpec with Matchers
   with EvolutionsDaoComponent
   with LoggerComponent
   with ConfigurationComponent
+  with EmbeddedMongoDb
   with CommandsComponent
   with ExecutorComponent
   with JournalComponent
