@@ -1,8 +1,19 @@
 language: scala
 services:
-   - mongodb
+  - mongodb
 jdk:
-   - oraclejdk8
-sbt_args: -no-colors
+  - oraclejdk8
 scala:
-   - 2.11.7
+  - 2.11.7
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION compile test scalastyle
+notifications:
+  email:
+    - michael@evojam.com
+after_success:
+  - '[[ ( $TRAVIS_BRANCH == \"master\" && $TRAVIS_PULL_REQUEST == "false" ]] && { sbt
+  publish; };'
+env:
+  global:
+  - secure: P2LBbsPUePGcoJDOi/qxrhAZVyTxJawoVFnUy3/BKvzgff5eAINLkyXJafUJ6+RdRNFcVU5+5dMwxLvCvxNLmCXXqubXsxA7NIIL7ZQT0sgAIt2KqU5aICKiTxdQ6h1SnihpW3poFB7T2nd3l+zJcfCHuQGLI5kjPiiXP5NMyXtKpoe0GLn+yG8XBOKtKAsKK2cTnKRkXduCsq4zWYgMr+ZHY8PKMUATlQwuf73Q89XdaqtYLNdbYCBxqx02ltkF9whAlCesG3t/RVAk+Co7SrgkYIjDEx8HegLWBidNJhPGydzc4shhbH9i8BruIYllVFChvh9SiChnPqq9sDkuGfEzhw7X2rwjKyi3G+a8e8RoA1R7Tue23TpwCn5YEG2F4z4uop1QLqV2LrK7XQlo4GXR34qpaa7q8G0dqNXXKmuMIEAAXfIyZ24H5jBsmjFiotWEaFiIGaw6/nbh0UGuvYYqi5AGpbdIY4mmn6riom7K0xYSXOb6vHOPNjYf5Z0Pn9sKAfkwBsMpYBR4GAdhw+G55tByl8BReZ1K+dTZ+DcbFkzgLEWB/RiCDAVQzSSM+QoUxE/7GYewK7BrqfPRD7tQmvJNg3sfUKDp0/lrb3MlUqcBOq9GX/MnPidlrDmff2GD8HaIQkdm/9v01xONXAytuP24CeJSDah9nmaK5Uw=
+  - secure: g0npCPrVdYJjy24XT+UUA+ku7c9Q/3vBBDniZtvCxwzogmjrnNDdWKQ9wDsK9FdO0aseB+t7GaY/05Dhi7UvnbZYhCTVVNTC0Uv272VNAjEWPdh0N/eT8awAfqFWYKVQNjLBOAhUhDybZVWEutTxcBfBreSmXBIKvWjnHrtRH9747sYu1GxMrRL4jDvxXZg8lTJwD2FndSAaGMUjBOX136nSHJA8K8Qw2B7FJ3eBsbzgr3rok6f7+ownd0fEuxC/MQYW23ONMPLUFuyfKXLbGBrgr+Wvw0ohwKzHnLF1sWWdyahfTni8gTMUCbdHVspsfwTsBtda4pu+fYLZZmei0P4bco5/SoOOTFSCwyQbyS5W19eoYrYixzAd2K+lexcH0+i/QyWPnDkHfS3MHyWpqe0BxhyGcsDR0WmCT0cUVqPAbMz6DzEnpPClZOyjpjG7yrB3QU1vdopKfhTyLhFMUj16n7Q0xBHD3OgWpP3PcmmCWDPavZZGW2FhEzQNFyF3WXTaJJ/wD6ALsTT710VQfRmjQJj9fyA6ynDcNARZNjcRzN5Wb0dM2wqHJU/UzTm3+c1jzUVydpGr9LCmynoTea1BYIzzsPYAlqA0uOo3+C0TMHNkOmk2aoqxn9hJjGT+1FZC/m4Hg82ZV2DCvdjumgE/cWX7AHzRgFdWomxN8PQ=

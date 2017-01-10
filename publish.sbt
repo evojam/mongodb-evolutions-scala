@@ -1,3 +1,11 @@
+import scala.util.Properties
+
+credentials += Credentials(
+  "Sonatype Nexus Repository Manager",
+  "oss.sonatype.org",
+  Properties.envOrElse("SONATYPE_USERNAME", ""),
+  Properties.envOrElse("SONATYPE_PASSWORD", ""))
+
 publishMavenStyle := true
 
 publishTo := {
